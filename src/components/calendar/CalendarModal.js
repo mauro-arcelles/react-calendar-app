@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { eventAddNew, eventClearActiveEvent, eventUpdated } from '../../actions/events';
+import { eventClearActiveEvent, eventStartUpdate, startStartAddNew } from '../../actions/events';
 
 const customStyles = {
   content: {
@@ -98,17 +98,10 @@ export const CalendarModal = () => {
     }
 
     if (activeEvent) {
-      dispatch(eventUpdated(formValues));
+      dispatch(eventStartUpdate(formValues));
 
     } else {
-      dispatch(eventAddNew({
-        ...formValues,
-        id: new Date().getTime(),
-        user: {
-          name: 'Pruebitas',
-          _id: '123'
-        }
-      }));
+      dispatch(startStartAddNew(formValues));
 
     }
 
@@ -138,7 +131,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora inicio</label>
           <DateTimePicker
             onChange={handleStartDateChange}
-            value={dateStart}
+            value={(activeEvent) ? activeEvent.start : dateStart}
             className='form-control'
             format="y-MM-dd h:mm:ss a"
             amPmAriaLabel="Select AM/PM"
@@ -149,7 +142,7 @@ export const CalendarModal = () => {
           <label>Fecha y hora fin</label>
           <DateTimePicker
             onChange={handleEndDateChange}
-            value={dateEnd}
+            value={(activeEvent) ? activeEvent.end : dateEnd}
             minDate={dateStart}
             className='form-control'
             format="y-MM-dd h:mm:ss a"
